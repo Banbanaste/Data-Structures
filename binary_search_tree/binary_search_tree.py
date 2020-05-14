@@ -1,7 +1,9 @@
+from collections import deque
+
 """
-Binary search trees are a data structure that enforce an ordering over 
-the data they store. That ordering in turn makes it a lot more efficient 
-at searching for a particular piece of data in the tree. 
+Binary search trees are a data structure that enforce an ordering over
+the data they store. That ordering in turn makes it a lot more efficient
+at searching for a particular piece of data in the tree.
 
 This part of the project comprises two days:
 1. Implement the methods `insert`, `contains`, `get_max`, and `for_each`
@@ -57,19 +59,50 @@ class BSTNode:
         return self.right.get_max()
 
     # Call the function `fn` on the value of each node
-    def for_each(self, fn):
+    def for_each_preorder(self, fn):
+        fn(self.value)
         if self.left:
-            self.left.for_each(fn)
+            self.left.for_each_preorder(fn)
         if self.right:
-            self.right.for_each(fn)
-        return fn(self.value)
+            self.right.for_each_preorder(fn)
+        return
+
+    def for_each_inorder(self, fn):
+        if self.left:
+            self.left.for_each_inorder(fn)
+        fn(self.value)
+        if self.right:
+            self.right.for_each_inorder(fn)
+        return
+
+    def for_each_postorder(self, fn):
+        if self.left:
+            self.left.for_each_postorder(fn)
+        if self.right:
+            self.right.for_each_postorder(fn)
+        fn(self.value)
+        return
+
+    def breadth_first(self, fn):
+        queue = deque()
+
+        queue.append(self)
+
+        while len(queue) > 0:
+            current = queue.popleft()
+            if current.left:
+                queue.append(current.left)
+            if current.right:
+                queue.append(current.right)
+            fn(current.value)
 
     # Part 2 -----------------------
 
     # Print all the values in order from low to high
     # Hint:  Use a recursive, depth first traversal
-    def in_order_print(self, node):
-        pass
+
+    def in_order_print(self):
+        self.for_each_inorder(print)
 
     # Print the value of every node, starting with the given node,
     # in an iterative breadth first traversal
@@ -85,15 +118,13 @@ class BSTNode:
     # Note: Research may be required
 
     # Print Pre-order recursive DFT
-    def pre_order_dft(self, node):
-        pass
+    def pre_order_dft(self):
+        self.for_each_preorder(print)
 
     # Print Post-order recursive DFT
-    def post_order_dft(self, node):
-        pass
+    def post_order_dft(self):
+        self.for_each_postorder(print)
 
-
-""" 
 
 bst = BSTNode(5)
 bst.insert(2)
@@ -101,11 +132,10 @@ bst.insert(3)
 bst.insert(7)
 bst.insert(6)
 
-print(bst)
-
-"""
-
-bst2 = BSTNode(1)
-bst2.insert(1)
-
-print(bst2.value)
+bst.pre_order_dft()
+print("__" * 50)
+bst.in_order_print()
+print("__" * 50)
+bst.post_order_dft()
+print("__" * 50)
+bst.breadth_first(print)
